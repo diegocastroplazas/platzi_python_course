@@ -4,7 +4,7 @@
     Agenda telefónica básica.
 
 '''
-
+import csv
 class Contact:
     def __init__(self, contactData):
         self.data = contactData
@@ -12,9 +12,11 @@ class Contact:
 class Agenda:
     def __init__(self):
         self.contacts = []
+        self._fileName = 'contacts.csv'
 
     def addContact(self, contactData):
         self.contacts.append(contactData)
+        self._save()
 
     def searchContact(self, criteria):
         if len(self.contacts) > 0:
@@ -31,6 +33,7 @@ class Agenda:
         index = self.searchContact(criteria=criteria)
         del self.contacts[index]
         print (self.contacts)
+        self._save()
 
     def updateContact(self, criteria):
         index = self.searchContact(criteria=criteria)
@@ -40,6 +43,14 @@ class Agenda:
         contactData['email'] = input("Ingrese el nuevo email del contacto")
 
         self.contacts[index] = contactData
+        self._save()
+
+    def _save(self):
+        with open(self._fileName, 'w') as f:
+            writer = csv.DictWriter(f, fieldnames = self.contacts[0].keys())
+            writer.writeheader()
+            for contact in self.contacts:
+                writer.writerow(contact)
 
 
     def __str__(self):
